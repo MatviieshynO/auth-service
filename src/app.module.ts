@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { LoggerModule } from './infrastructure/logger/logger.module';
 
 @Module({
   imports: [
@@ -8,6 +9,7 @@ import { ConfigModule } from '@nestjs/config';
       cache: true,
       envFilePath: ['.env'],
     }),
+    LoggerModule,
   ],
   controllers: [],
   providers: [],
