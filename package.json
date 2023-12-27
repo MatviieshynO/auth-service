@@ -1,10 +1,26 @@
 {
-  "name": "authService",
+  "name": "auth-service_api",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "A robust authentication service handling user registration, login, and authorization. This service also manages user confirmation through email, password recovery, and user administration.",
+  "keywords": [
+    "authentication",
+    "authorization",
+    "registration",
+    "email confirmation",
+    "password recovery",
+    "user management"
+  ],
+  "author": "Oleh Matviieshyn <Olopromotion@gmail.com>",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MatviieshynO/auth-service.git"
+  },
+  "engines": {
+    "node": ">=20.5.1",
+    "npm": ">=9.8.0"
+  },
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
