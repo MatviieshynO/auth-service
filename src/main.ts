@@ -20,8 +20,19 @@ async function bootstrap() {
   app.enableCors({
     origin: ALLOWED_ORIGIN,
   });
-  // Middleware
-  app.use(helmet());
+  // Helmet
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: [`'self'`],
+          styleSrc: [`'self'`, `'unsafe-inline'`],
+          imgSrc: [`'self'`, 'data:', 'validator.swagger.io'],
+          scriptSrc: [`'self'`, `https: 'unsafe-inline'`],
+        },
+      },
+    }),
+  );
 
   try {
     await app.listen(API_PORT, API_HOST, () => {
