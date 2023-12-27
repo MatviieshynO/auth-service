@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { Logger } from './infrastructure/logger/logger.service';
+import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,10 +16,12 @@ async function bootstrap() {
     configService.get<string>('ALLOWED_ORIGIN');
 
   const logger = app.get(Logger);
-
+  // Config
   app.enableCors({
     origin: ALLOWED_ORIGIN,
   });
+  // Middleware
+  app.use(helmet());
 
   try {
     await app.listen(API_PORT, API_HOST, () => {
