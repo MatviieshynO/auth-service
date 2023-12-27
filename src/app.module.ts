@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from './infrastructure/logger/logger.module';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { DbModule } from './db/db.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
         limit: 10,
       },
     ]),
+    DbModule,
   ],
   controllers: [],
   providers: [],
