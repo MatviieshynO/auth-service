@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { LoggerModule } from './infrastructure/logger/logger.module';
+import { LoggerModule } from './common/logger/logger.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { DbModule } from './db/db.module';
 
