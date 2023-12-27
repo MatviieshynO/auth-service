@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerModule } from './infrastructure/logger/logger.module';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -10,6 +11,12 @@ import { LoggerModule } from './infrastructure/logger/logger.module';
       envFilePath: ['.env'],
     }),
     LoggerModule,
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 10,
+      },
+    ]),
   ],
   controllers: [],
   providers: [],
