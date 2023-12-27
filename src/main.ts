@@ -11,8 +11,14 @@ async function bootstrap() {
   const API_HOST: string = configService.get<string>('API_HOST') || 'localhost';
   const API_PROTOCOl: string | undefined =
     configService.get<string>('API_PROTOCOl');
+  const ALLOWED_ORIGIN: string | undefined =
+    configService.get<string>('ALLOWED_ORIGIN');
 
   const logger = app.get(Logger);
+
+  app.enableCors({
+    origin: ALLOWED_ORIGIN,
+  });
 
   try {
     await app.listen(API_PORT, API_HOST, () => {
