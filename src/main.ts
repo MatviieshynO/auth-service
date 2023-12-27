@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { Logger } from './infrastructure/logger/logger.service';
 import helmet from 'helmet';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -33,6 +34,15 @@ async function bootstrap() {
       },
     }),
   );
+  // Swagger
+  const config = new DocumentBuilder()
+    .setTitle('auth-service')
+    .setDescription('The auth-service API ')
+    .setVersion('1.0')
+    .addTag('auth')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
 
   try {
     await app.listen(API_PORT, API_HOST, () => {
