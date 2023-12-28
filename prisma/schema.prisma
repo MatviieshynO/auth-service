@@ -9,3 +9,25 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Users {
+  id          Int           @id         @default(autoincrement())
+  first_name  String   
+  family_name String
+  email       String        @unique
+  gender      UserGender
+  role        UserRole      @default(User)
+  is_online   Boolean       @default(false)
+  isVerified  Boolean       @default(false) 
+  last_visit  DateTime?      
+  create_at   DateTime      @default(now())
+  update_at   DateTime      @updatedAt
+}
+enum UserGender {
+  Male
+  Female
+}
+enum UserRole {
+  Admin
+  User
+}

@@ -39,7 +39,6 @@ async function bootstrap() {
     .setTitle('auth-service')
     .setDescription('The auth-service API ')
     .setVersion('1.0')
-    .addTag('auth')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
