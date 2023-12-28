@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { Logger } from './common/logger/logger.service';
 import helmet from 'helmet';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -21,6 +22,8 @@ async function bootstrap() {
   app.enableCors({
     origin: ALLOWED_ORIGIN,
   });
+  // Validator pipe
+  app.useGlobalPipes(new ValidationPipe());
   // Helmet
   app.use(
     helmet({
