@@ -3,7 +3,7 @@ import { PrismaService } from 'src/db/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Users } from '@prisma/client';
 import { Logger } from 'src/common/logger/logger.service';
-import { PasswordHashService } from './password-hash.service';
+import { PasswordHashService } from './password-hash/password-hash.service';
 
 @Injectable()
 export class UsersService {
