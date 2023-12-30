@@ -8,7 +8,7 @@ import {
   IsIn,
 } from 'class-validator';
 
-export class CreateUserDto {
+export class CreateBodyUserDto {
   @ApiProperty({ example: 'firstName_test' })
   @IsNotEmpty({ message: 'First name is required' })
   @IsString({ message: 'First name must be a string' })

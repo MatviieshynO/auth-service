@@ -1,6 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/db/prisma.service';
-import { CreateUserDto } from './dto/create-user.dto';
+import {
+  CreateBodyUserDto,
+  BadRequestResponseDto,
+  CreatedResponseDto,
+} from './dto/create-user.dto';
 import { Users } from '@prisma/client';
 import { Logger } from 'src/common/logger/logger.service';
 import { PasswordHashService } from './password-hash/password-hash.service';
@@ -12,8 +16,12 @@ export class UsersService {
     private readonly logger: Logger,
     private readonly passwordHashService: PasswordHashService,
   ) {}
-
-  async create(createUserDto: CreateUserDto) {
+  ////////////////////////
+  // Create a new user //
+  ///////////////////////
+  async create(
+    createUserDto: CreateBodyUserDto,
+  ): Promise<BadRequestResponseDto | CreatedResponseDto> {
     try {
       // Check if passwords match
       if (createUserDto.password !== createUserDto.confirm_password) {
@@ -61,7 +69,7 @@ export class UsersService {
           },
         });
 
-      // Return the ID of the created user
+      // Return the data of the created user
       return { id, first_name, family_name, email, gender, role };
     } catch (error) {
       // Log errors and re-throw them
@@ -69,6 +77,37 @@ export class UsersService {
         this.logger.error(`Error creating a user: ${error.message}`);
       }
 
+      throw error;
+    }
+  }
+  ////////////////////////
+  // Find a user by ID //
+  //////////////////////
+  async findOne(id: number) {
+    try {
+      const currentUser = await this.prismaService.users.findUnique({
+        where: { id: id },
+      });
+      if (!currentUser) {
+        throw new HttpException(
+          {
+            message: [`User with id ${id} not found`],
+            error: 'Not Found',
+            status: HttpStatus.NOT_FOUND,
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      const { first_name, family_name, email, gender, role } = currentUser;
+      return {
+        id,
+        first_name,
+        family_name,
+        email,
+        gender,
+        role,
+      };
+    } catch (error) {
       throw error;
     }
   }
