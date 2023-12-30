@@ -32,8 +32,8 @@ export class CreateBodyUserDto {
 
   @ApiProperty({ example: 'Test123!' })
   @IsStrongPassword()
-  @IsNotEmpty({ message: 'Password is required' })
-  @IsString({ message: 'Password must be a string' })
+  @IsNotEmpty({ message: 'Confirm password is required' })
+  @IsString({ message: 'Confirm password must be a string' })
   confirm_password: string;
 
   @ApiProperty({ example: 'Male' })
