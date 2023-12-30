@@ -3,8 +3,6 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class PasswordHashService {
-  constructor() {}
-
   // Hash the given password using bcrypt
   async hashPassword(password: string): Promise<string> {
     try {
