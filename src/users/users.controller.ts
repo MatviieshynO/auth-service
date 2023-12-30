@@ -6,6 +6,7 @@ import {
   Param,
   ParseIntPipe,
   Put,
+  Delete,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import {
@@ -30,6 +31,10 @@ import {
   OkResponseUpdateUserDto,
   UpdateUserBodyDto,
 } from './dto/update.user.dto';
+import {
+  NotFoundDeleteUserDto,
+  OkResponseDeleteUserDto,
+} from './dto/delete-user.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -39,6 +44,7 @@ export class UsersController {
   ////////////////////////
   // Create a new USer //
   //////////////////////
+
   @Post()
   @ApiOperation({
     summary: 'Create a new user',
@@ -62,6 +68,7 @@ export class UsersController {
   ////////////////////////
   // Find a user by ID //
   //////////////////////
+
   @Get(':id')
   @ApiOperation({
     summary: 'Get user by id',
@@ -82,6 +89,7 @@ export class UsersController {
   ////////////////////
   // Get all users //
   ///////////////////
+
   @Get()
   @ApiOperation({
     summary: 'Get all users',
@@ -99,20 +107,42 @@ export class UsersController {
   ////////////////////
   // Update user //
   ///////////////////
+
   @Put(':id')
   @ApiOperation({
     summary: 'Update user by id',
     description: 'This endpoint is used to update user by id.',
   })
+  @ApiParam({ name: 'id', description: 'User ID', type: Number })
+  @ApiOkResponse({ type: OkResponseUpdateUserDto, description: 'OK.' })
   @ApiNotFoundResponse({
     type: NotFoundUpdateUserDto,
     description: 'Not Found.',
   })
-  @ApiOkResponse({ type: OkResponseUpdateUserDto, description: 'OK.' })
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserBodyDto: UpdateUserBodyDto,
   ): Promise<OkResponseUpdateUserDto | NotFoundUpdateUserDto> {
     return await this.usersService.update(id, updateUserBodyDto);
+  }
+
+  ////////////////////
+  // Delete user //
+  ///////////////////
+  @Delete(':id')
+  @ApiParam({ name: 'id', description: 'User ID', type: Number })
+  @ApiOperation({
+    summary: 'Delete user by id',
+    description: 'This endpoint is used to delete user by id.',
+  })
+  @ApiOkResponse({ type: OkResponseDeleteUserDto, description: 'OK.' })
+  @ApiNotFoundResponse({
+    type: NotFoundDeleteUserDto,
+    description: 'Not Found.',
+  })
+  async delete(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<OkResponseDeleteUserDto | NotFoundDeleteUserDto> {
+    return await this.usersService.delete(id);
   }
 }

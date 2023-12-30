@@ -15,6 +15,7 @@ import {
   OkResponseUpdateUserDto,
   UpdateUserBodyDto,
 } from './dto/update.user.dto';
+import { NotFoundDeleteUserDto, OkResponseDeleteUserDto } from './dto/delete-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -113,6 +114,10 @@ export class UsersService {
         role,
       };
     } catch (error) {
+      if (!(error instanceof HttpException) && !error.response) {
+        this.logger.error(`Error creating a user: ${error.message}`);
+      }
+
       throw error;
     }
   }
@@ -136,6 +141,10 @@ export class UsersService {
       }
       return { users: allUsers };
     } catch (error) {
+      if (!(error instanceof HttpException) && !error.response) {
+        this.logger.error(`Error creating a user: ${error.message}`);
+      }
+
       throw error;
     }
   }
@@ -148,26 +157,70 @@ export class UsersService {
     id: number,
     updateUserBodyDto: UpdateUserBodyDto,
   ): Promise<OkResponseUpdateUserDto | NotFoundUpdateUserDto> {
-    const existingUser: Users | null =
-      await this.prismaService.users.findUnique({
+    try {
+      const existingUser: Users | null =
+        await this.prismaService.users.findUnique({
+          where: { id },
+        });
+
+      if (!existingUser) {
+        throw new HttpException(
+          {
+            message: [`User with id ${id} not found`],
+            error: 'Not Found',
+            status: HttpStatus.NOT_FOUND,
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      const updatedUser: Users = await this.prismaService.users.update({
+        where: { id },
+        data: { ...updateUserBodyDto },
+      });
+      const { first_name, family_name, email, gender, role } = updatedUser;
+      return { id, first_name, family_name, email, gender, role };
+    } catch (error) {
+      if (!(error instanceof HttpException) && !error.response) {
+        this.logger.error(`Error creating a user: ${error.message}`);
+      }
+
+      throw error;
+    }
+  }
+  ////////////////////
+  // Delete user //
+  ///////////////////
+
+  async delete(
+    id: number,
+  ): Promise<OkResponseDeleteUserDto | NotFoundDeleteUserDto> {
+    try {
+      const existingUser: Users | null =
+        await this.prismaService.users.findUnique({
+          where: { id },
+        });
+
+      if (!existingUser) {
+        throw new HttpException(
+          {
+            message: [`User with id ${id} not found`],
+            error: 'Not Found',
+            status: HttpStatus.NOT_FOUND,
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      const deletedUser: Users = await this.prismaService.users.delete({
         where: { id },
       });
+      const { first_name, family_name, email, gender, role } = deletedUser;
+      return { id, first_name, family_name, email, gender, role };
+    } catch (error) {
+      if (!(error instanceof HttpException) && !error.response) {
+        this.logger.error(`Error creating a user: ${error.message}`);
+      }
 
-    if (!existingUser) {
-      throw new HttpException(
-        {
-          message: [`User with id ${id} not found`],
-          error: 'Not Found',
-          status: HttpStatus.NOT_FOUND,
-        },
-        HttpStatus.NOT_FOUND,
-      );
+      throw error;
     }
-    const updatedUser: Users = await this.prismaService.users.update({
-      where: { id },
-      data: { ...updateUserBodyDto },
-    });
-    const { first_name, family_name, email, gender, role } = updatedUser;
-    return { id, first_name, family_name, email, gender, role };
   }
 }
