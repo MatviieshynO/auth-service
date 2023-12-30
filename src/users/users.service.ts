@@ -8,6 +8,8 @@ import {
 import { Users } from '@prisma/client';
 import { Logger } from 'src/common/logger/logger.service';
 import { PasswordHashService } from './password-hash/password-hash.service';
+import { NotFoundFindOneDto, OkResponseDto } from './dto/findOne-user.dto';
+import { NotFoundGetAllDto, OkArrayResponseDto } from './dto/getAll-users.dto';
 
 @Injectable()
 export class UsersService {
@@ -83,7 +85,7 @@ export class UsersService {
   ////////////////////////
   // Find a user by ID //
   //////////////////////
-  async findOne(id: number) {
+  async findOne(id: number): Promise<OkResponseDto | NotFoundFindOneDto> {
     try {
       const currentUser = await this.prismaService.users.findUnique({
         where: { id: id },
@@ -107,6 +109,28 @@ export class UsersService {
         gender,
         role,
       };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  ////////////////////
+  // Get all users //
+  ///////////////////
+  async getAll(): Promise<OkArrayResponseDto | NotFoundGetAllDto> {
+    try {
+      const allUsers = await this.prismaService.users.findMany();
+      if (!allUsers.length) {
+        throw new HttpException(
+          {
+            message: [`No records found`],
+            error: 'Not Found',
+            status: HttpStatus.NOT_FOUND,
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      return { users: allUsers };
     } catch (error) {
       throw error;
     }

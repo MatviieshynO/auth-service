@@ -23,6 +23,7 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
+import { NotFoundGetAllDto, OkArrayResponseDto } from './dto/getAll-users.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -56,6 +57,10 @@ export class UsersController {
   // Find a user by ID //
   //////////////////////
   @Get(':id')
+  @ApiOperation({
+    summary: 'Get user by id',
+    description: 'This endpoint is used to search for a user by id.',
+  })
   @ApiOkResponse({ type: OkResponseDto, description: 'OK.' })
   @ApiNotFoundResponse({
     type: NotFoundFindOneDto,
@@ -66,5 +71,22 @@ export class UsersController {
     @Param('id', ParseIntPipe) id: number,
   ): Promise<OkResponseDto | NotFoundFindOneDto> {
     return await this.usersService.findOne(id);
+  }
+
+  ////////////////////
+  // Get all users //
+  ///////////////////
+  @Get()
+  @ApiOperation({
+    summary: 'Get all users',
+    description: 'This endpoint is used to get all users.',
+  })
+  @ApiOkResponse({ type: OkArrayResponseDto, description: 'OK.' })
+  @ApiNotFoundResponse({
+    type: NotFoundGetAllDto,
+    description: 'Not Found.',
+  })
+  async getAll(): Promise<OkArrayResponseDto | NotFoundGetAllDto> {
+    return await this.usersService.getAll();
   }
 }
