@@ -9,7 +9,7 @@ export class NotFoundFindOneDto {
   error: string;
 
   @ApiProperty({ example: 404 })
-  statusCode: number;
+  status: number;
 }
 
 export class OkResponseDto {

@@ -55,7 +55,7 @@ export class BadRequestResponseDto {
   error: string;
 
   @ApiProperty({ example: 400 })
-  statusCode: number;
+  status: number;
 }
 
 export class CreatedResponseDto {

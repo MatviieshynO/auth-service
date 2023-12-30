@@ -9,7 +9,7 @@ export class NotFoundGetAllDto {
   error: string;
 
   @ApiProperty({ example: 404 })
-  statusCode: number;
+  status: number;
 }
 export class OkArrayResponseDto {
   @ApiProperty({ type: [OkResponseDto] })

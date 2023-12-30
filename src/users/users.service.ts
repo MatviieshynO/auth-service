@@ -10,6 +10,11 @@ import { Logger } from 'src/common/logger/logger.service';
 import { PasswordHashService } from './password-hash/password-hash.service';
 import { NotFoundFindOneDto, OkResponseDto } from './dto/findOne-user.dto';
 import { NotFoundGetAllDto, OkArrayResponseDto } from './dto/getAll-users.dto';
+import {
+  NotFoundUpdateUserDto,
+  OkResponseUpdateUserDto,
+  UpdateUserBodyDto,
+} from './dto/update.user.dto';
 
 @Injectable()
 export class UsersService {
@@ -21,6 +26,7 @@ export class UsersService {
   ////////////////////////
   // Create a new user //
   ///////////////////////
+
   async create(
     createUserDto: CreateBodyUserDto,
   ): Promise<BadRequestResponseDto | CreatedResponseDto> {
@@ -62,12 +68,8 @@ export class UsersService {
       const { id, first_name, family_name, email, gender, role } =
         await this.prismaService.users.create({
           data: {
-            first_name: createUserDto.first_name,
-            family_name: createUserDto.family_name,
-            email: createUserDto.email,
+            ...createUserDto,
             password: hashedPassword,
-            gender: createUserDto.gender,
-            role: createUserDto.role,
           },
         });
 
@@ -85,6 +87,7 @@ export class UsersService {
   ////////////////////////
   // Find a user by ID //
   //////////////////////
+
   async findOne(id: number): Promise<OkResponseDto | NotFoundFindOneDto> {
     try {
       const currentUser = await this.prismaService.users.findUnique({
@@ -117,6 +120,7 @@ export class UsersService {
   ////////////////////
   // Get all users //
   ///////////////////
+
   async getAll(): Promise<OkArrayResponseDto | NotFoundGetAllDto> {
     try {
       const allUsers = await this.prismaService.users.findMany();
@@ -134,5 +138,36 @@ export class UsersService {
     } catch (error) {
       throw error;
     }
+  }
+
+  ////////////////////
+  // Update user //
+  ///////////////////
+
+  async update(
+    id: number,
+    updateUserBodyDto: UpdateUserBodyDto,
+  ): Promise<OkResponseUpdateUserDto | NotFoundUpdateUserDto> {
+    const existingUser: Users | null =
+      await this.prismaService.users.findUnique({
+        where: { id },
+      });
+
+    if (!existingUser) {
+      throw new HttpException(
+        {
+          message: [`User with id ${id} not found`],
+          error: 'Not Found',
+          status: HttpStatus.NOT_FOUND,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    const updatedUser: Users = await this.prismaService.users.update({
+      where: { id },
+      data: { ...updateUserBodyDto },
+    });
+    const { first_name, family_name, email, gender, role } = updatedUser;
+    return { id, first_name, family_name, email, gender, role };
   }
 }

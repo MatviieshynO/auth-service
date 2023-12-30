@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Put,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import {
@@ -24,6 +25,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { NotFoundGetAllDto, OkArrayResponseDto } from './dto/getAll-users.dto';
+import {
+  NotFoundUpdateUserDto,
+  OkResponseUpdateUserDto,
+  UpdateUserBodyDto,
+} from './dto/update.user.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -88,5 +94,25 @@ export class UsersController {
   })
   async getAll(): Promise<OkArrayResponseDto | NotFoundGetAllDto> {
     return await this.usersService.getAll();
+  }
+
+  ////////////////////
+  // Update user //
+  ///////////////////
+  @Put(':id')
+  @ApiOperation({
+    summary: 'Update user by id',
+    description: 'This endpoint is used to update user by id.',
+  })
+  @ApiNotFoundResponse({
+    type: NotFoundUpdateUserDto,
+    description: 'Not Found.',
+  })
+  @ApiOkResponse({ type: OkResponseUpdateUserDto, description: 'OK.' })
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserBodyDto: UpdateUserBodyDto,
+  ): Promise<OkResponseUpdateUserDto | NotFoundUpdateUserDto> {
+    return await this.usersService.update(id, updateUserBodyDto);
   }
 }
