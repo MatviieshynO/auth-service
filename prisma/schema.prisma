@@ -23,6 +23,7 @@ model Users {
   last_visit  DateTime?      
   create_at   DateTime?      @default(now())
   update_at   DateTime?      @updatedAt
+  @@map(name: "users")
 }
 enum UserGender {
   Male
@@ -31,4 +32,15 @@ enum UserGender {
 enum UserRole {
   Admin
   User
+}
+
+model EmailVerification {
+  id             Int            @id @default(autoincrement()) 
+  user_id        Int 
+  token          String         @unique
+  confirm_code   Int            
+  token_expiry   DateTime
+  created_at     DateTime?      @default(now())
+  update_at      DateTime?      @updatedAt
+  @@map(name: "email_verification")
 }

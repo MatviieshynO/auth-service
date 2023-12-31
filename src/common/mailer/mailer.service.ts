@@ -10,8 +10,11 @@ export class MailerService {
   private transporter: nodemailer.Transporter;
 
   constructor(private readonly configService: ConfigService) {
+    // Initialize the transporter when the service instance is created
     this.setupTransporter();
   }
+
+  // Asynchronous method for setting up the transporter
   private async setupTransporter(): Promise<void> {
     this.transporter = nodemailer.createTransport(
       smtpTransport({
@@ -24,6 +27,10 @@ export class MailerService {
     );
   }
 
+  // ********************************
+  // Sending email confirmation
+  // ********************************
+
   async sendEmailConfirmation(
     userName: string,
     confirmationLink: string,
@@ -31,20 +38,26 @@ export class MailerService {
     toEmail: string,
   ): Promise<void> {
     try {
+      // Define the path to the email template
       const templatePath = path.resolve(
         'src',
         'templates',
         'email-confirmation.html',
       );
-      const emailTemplateBuffer = await fs.readFile(templatePath, 'utf-8'); // Асинхронне читання файлу
 
-      const emailTemplate = emailTemplateBuffer.toString(); // Перетворення Buffer у рядок
+      // Asynchronously read the content of the email template as a buffer
+      const emailTemplateBuffer = await fs.readFile(templatePath, 'utf-8');
 
+      // Convert the buffer to a string
+      const emailTemplate = emailTemplateBuffer.toString();
+
+      // Variables in the email template with actual values
       const html = emailTemplate
         .replace('{{ userName }}', userName)
         .replace('{{ confirmationLink }}', confirmationLink)
         .replace('{{ confirmationCode }}', confirmationCode);
 
+      // Create the configuration object for the email
       const mailOptions: nodemailer.SendMailOptions = {
         from: this.configService.get<string>('EMAIL_USER'),
         to: toEmail,
@@ -52,6 +65,7 @@ export class MailerService {
         html,
       };
 
+      // Send the email using the transporter
       await this.transporter.sendMail(mailOptions);
     } catch (error) {
       throw error;

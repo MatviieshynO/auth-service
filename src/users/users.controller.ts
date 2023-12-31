@@ -9,7 +9,7 @@ import {
   Delete,
   Patch,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { UsersCrudService } from './users-services/users-crud.service';
 import {
   CreateBodyUserDto,
   BadRequestResponseDto,
@@ -42,11 +42,15 @@ import {
   NotFoundChangePasswordDto,
   OkResponseChangePasswordDto,
 } from './dto/change-password.dto';
+import { UsersActionsService } from './users-services/users-actions.service';
 
 @ApiTags('users')
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersCrudService: UsersCrudService,
+    private readonly usersActionsService: UsersActionsService,
+  ) {}
 
   // *************************************
   // User-related CRUD operations
@@ -77,7 +81,7 @@ export class UsersController {
   async create(
     @Body() createUserDto: CreateBodyUserDto,
   ): Promise<CreatedResponseDto | BadRequestResponseDto> {
-    return await this.usersService.create(createUserDto);
+    return await this.usersCrudService.create(createUserDto);
   }
 
   /**
@@ -106,7 +110,7 @@ export class UsersController {
   async findOne(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<OkResponseDto | NotFoundFindOneDto> {
-    return await this.usersService.findOne(id);
+    return await this.usersCrudService.findOne(id);
   }
 
   /**
@@ -127,7 +131,7 @@ export class UsersController {
     description: 'No users found. The user database is empty.',
   })
   async getAll(): Promise<OkArrayResponseDto | NotFoundGetAllDto> {
-    return await this.usersService.getAll();
+    return await this.usersCrudService.getAll();
   }
 
   /**
@@ -166,7 +170,7 @@ export class UsersController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserBodyDto: UpdateUserBodyDto,
   ): Promise<OkResponseUpdateUserDto | NotFoundUpdateUserDto> {
-    return await this.usersService.update(id, updateUserBodyDto);
+    return await this.usersCrudService.update(id, updateUserBodyDto);
   }
 
   /**
@@ -196,7 +200,7 @@ export class UsersController {
   async delete(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<OkResponseDeleteUserDto | NotFoundDeleteUserDto> {
-    return await this.usersService.delete(id);
+    return await this.usersCrudService.delete(id);
   }
 
   // *************************************
@@ -241,6 +245,9 @@ export class UsersController {
     | BadRequestChangePasswordDto
     | NotFoundChangePasswordDto
   > {
-    return await this.usersService.changePassword(id, changePasswordBodyDto);
+    return await this.usersActionsService.changePassword(
+      id,
+      changePasswordBodyDto,
+    );
   }
 }
